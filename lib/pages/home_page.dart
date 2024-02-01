@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 String newPassword = '';
                 if (_titleController.text.isNotEmpty) {
-                  newPassword = getPassword(true, true, true, true, true, 10);
+                  newPassword = getPassword(true, true, true, true, true, 10.0);
                 }
                 _chaveController.text = newPassword;
               },
