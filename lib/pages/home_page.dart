@@ -87,7 +87,57 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         tooltip: 'Nova CHAVE',
         onPressed: _showDialog,
-        child: const Icon(Icons.add),
+        child: Container(
+            width: 56,
+            height: 56,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.pink,
+            ),
+            child: const Icon(Icons.add)),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.pink,
+        // this creates a notch in the center of the bottom bar
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: const Icon(
+                Icons.home,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.people,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.notifications,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(
+                Icons.settings,
+                color: Colors.white,
+              ),
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
     );
   }
