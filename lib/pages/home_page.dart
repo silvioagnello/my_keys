@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:my_keys/helpers/prefs.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:random_password_generator/random_password_generator.dart';
-import '../models/keys.dart';
+import 'package:my_keys/models/keys.dart';
+import 'dart:io';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,19 +30,47 @@ class _HomePageState extends State<HomePage> {
   void addKey({required Keys key}) {
     setState(() {
       lista.add(key);
+      //_saveData();
     });
     Prefs.saveKey(lista);
     _chaveController.clear();
     _titleController.clear();
   }
+  //
+  // Future<File> _getFile() async {
+  //   final directory = await getApplicationDocumentsDirectory();
+  //
+  //   return File("${directory.path}/data.json");
+  // }
+  //
+  // Future<File> _saveData() async {
+  //   String data = jsonEncode(lista);
+  //
+  //   final file = await _getFile();
+  //   return file.writeAsString(data);
+  // }
+  //
+  // Future<String?> _readData() async {
+  //   try {
+  //     final file = await _getFile();
+  //
+  //     return file.readAsString();
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
+    // _readData().then((value) {
+    //   List<dynamic> lista = jsonDecode(value!);
+    // });
     Prefs.readKey().then((v) {
       if (v != null) {
         setState(() {
           lista = v.cast<Keys>();
+          // print(lista);
         });
       }
     });
@@ -80,7 +112,19 @@ class _HomePageState extends State<HomePage> {
                     child: ListTile(
                       trailing: GestureDetector(
                           onTap: () {
-                            removerKey(index);
+                            var lastRemoved = item;
+                            bool wantedRemoved = true;
+                            final snack = SnackBar(
+                              duration: const Duration(seconds: 8),
+                              content: const Text('Chave será removida'),
+                              action: SnackBarAction(
+                                label: 'Continuar?',
+                                onPressed: () {
+                                  removerKey(index);
+                                },
+                              ),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(snack);
                           },
                           child: const Icon(
                             size: 54,
@@ -103,7 +147,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _showDialog({key}) {
+  _showDialog({key}) async {
     var txtButton = 'Atualizar ';
     var txtHead = '';
     if (key == null) {
@@ -135,7 +179,7 @@ class _HomePageState extends State<HomePage> {
               child: const Text('Gerar'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 _chaveController.text = '';
                 _titleController.text = '';
                 Navigator.pop(context);
