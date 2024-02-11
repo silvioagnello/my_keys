@@ -39,6 +39,15 @@ dependencies:
   random_password_generator: ^0.2.1
   flutter_launcher_icons: ^0.13.1
   path_provider: ^2.1.2
+  image_picker: ^1.0.7
+  cloud_firestore: ^4.15.4
+  #google_sign_in: ^6.2.1
+  firebase_storage: ^11.6.5
+  firebase_auth: ^4.17.4
+  firebase_core: ^2.25.4
+  bloc_pattern: ^3.0.1
+  rxdart: ^0.27.7
+  scoped_model: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -49,7 +58,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -63,8 +72,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -91,7 +100,7 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-  #
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_launcher_icons:

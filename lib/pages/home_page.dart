@@ -1,11 +1,11 @@
-import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:my_keys/helpers/prefs.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:my_keys/models/user_model.dart';
 import 'package:random_password_generator/random_password_generator.dart';
 import 'package:my_keys/models/keys.dart';
-import 'dart:io';
+import 'package:scoped_model/scoped_model.dart';
+
+import '../blocs/login_bloc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,62 +15,62 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _loginBloc = LoginBloc();
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _chaveController = TextEditingController();
 
   List<Keys> lista = [];
 
   void removerKey(int index) {
+    Keys key = lista[index];
+    FirebaseFirestore.instance
+        .collection('chaves')
+        .doc(key.title.toString())
+        .delete();
     setState(() {
       lista.removeAt(index);
     });
-    Prefs.saveKey(lista);
+    // Prefs.saveKey(lista);
   }
 
   void addKey({required Keys key}) {
     setState(() {
       lista.add(key);
-      //_saveData();
     });
-    Prefs.saveKey(lista);
+
+    FirebaseFirestore.instance
+        .collection('chaves')
+        .doc(key.title)
+        .set({'chave': key.chave});
+
+    //Prefs.saveKey(lista);
+
     _chaveController.clear();
     _titleController.clear();
   }
-  //
-  // Future<File> _getFile() async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //
-  //   return File("${directory.path}/data.json");
-  // }
-  //
-  // Future<File> _saveData() async {
-  //   String data = jsonEncode(lista);
-  //
-  //   final file = await _getFile();
-  //   return file.writeAsString(data);
-  // }
-  //
-  // Future<String?> _readData() async {
-  //   try {
-  //     final file = await _getFile();
-  //
-  //     return file.readAsString();
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
+
+  getDataFirebase() async {
+    Map<String, dynamic> val = <String, dynamic>{};
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('chaves').get();
+    for (DocumentSnapshot item in querySnapshot.docs) {
+      var dados = item['chave'];
+      Keys Mkey = Keys(title: item.id, chave: dados);
+      lista.add(Mkey);
+    }
+    return lista;
+  }
 
   @override
   void initState() {
     super.initState();
-    // _readData().then((value) {
-    //   List<dynamic> lista = jsonDecode(value!);
-    // });
-    Prefs.readKey().then((v) {
+
+    getDataFirebase().then((v) {
+      // Prefs.readKey().then((v) {
       if (v != null) {
         setState(() {
           lista = v.cast<Keys>();
-          // print(lista);
         });
       }
     });
@@ -78,65 +78,43 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      //backgroundColor: primaryColor,
-      appBar: AppBar(
-        title: const Text('My_Keys'),
-      ),
-      body: buildColumn(),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Nova CHAVE',
-        onPressed: _showDialog,
-        child: Container(
-            width: 56,
-            height: 56,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.pink,
-            ),
-            child: const Icon(Icons.add)),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.pink,
-        // this creates a notch in the center of the bottom bar
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 6,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: const Icon(
-                Icons.home,
-                color: Colors.white,
+    return ScopedModel<UserModel>(
+      model: UserModel(),
+      child: Scaffold(
+        //backgroundColor: primaryColor,
+        appBar: AppBar(
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 28.0),
+              child: IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {},
               ),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.people,
-                color: Colors.white,
-              ),
-              onPressed: () {},
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.notifications,
-                color: Colors.white,
-              ),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(
-                Icons.settings,
-                color: Colors.white,
-              ),
-              onPressed: () {},
-            ),
+            )
           ],
+          centerTitle: true,
+          title: Text('My_Keys (${lista.length.toString()})'),
+        ),
+        body: buildColumn(),
+        floatingActionButton: SizedBox(
+          height: 60,
+          width: 60,
+          child: FloatingActionButton(
+            backgroundColor: Colors.white,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.none,
+            //   tooltip: 'Nova CHAVE',
+            onPressed: _showDialog,
+            child: const Icon(Icons.add, size: 45),
+            // ),
+          ),
+        ),
+
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.endContained, //centerDocked,
+        bottomNavigationBar: const BottomAppBar(
+          color: Colors.pink,
+          notchMargin: 6,
         ),
       ),
     );
