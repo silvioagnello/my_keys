@@ -83,15 +83,6 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         //backgroundColor: primaryColor,
         appBar: AppBar(
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 28.0),
-              child: IconButton(
-                icon: const Icon(Icons.logout),
-                onPressed: () {},
-              ),
-            )
-          ],
           centerTitle: true,
           title: Text('My_Keys (${lista.length.toString()})'),
         ),

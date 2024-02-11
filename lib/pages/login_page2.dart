@@ -44,7 +44,9 @@ class _LoginPage2State extends State<LoginPage2> {
                   },
                   decoration: const InputDecoration(hintText: 'E-mail'),
                   keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                 ),
+                const SizedBox(height: 14),
                 TextFormField(
                   controller: _passwController,
                   validator: (msg) {
@@ -71,16 +73,16 @@ class _LoginPage2State extends State<LoginPage2> {
                       },
                       child: const Text('Entrar')),
                 ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: TextButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {}
-                    },
-                    child: const Text('Esqueci a senha',
-                        textAlign: TextAlign.right),
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.bottomRight,
+                //   child: TextButton(
+                //     onPressed: () {
+                //       if (_formKey.currentState!.validate()) {}
+                //     },
+                //     child: const Text('Esqueci a senha',
+                //         textAlign: TextAlign.right),
+                //   ),
+                // ),
               ],
             ),
           );
